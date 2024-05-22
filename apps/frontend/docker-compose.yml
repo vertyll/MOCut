@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mocut-frontend
+    container_name: mocut-frontend
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - mocut-network
+
+networks:
+  mocut-network:
+    driver: bridge
