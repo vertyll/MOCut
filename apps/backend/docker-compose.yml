@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+    image: mocut-backend
+    container_name: mocut-backend
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: mocut-backend
+      SERVICE_TAGS: dev
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: mocut
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - mocut-network
+
+  postgres:
+    image: postgres:13
+    container_name: mocut-postgres
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: mocut
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./docker/postgres/data:/var/lib/postgresql/data
+    networks:
+      - mocut-network
+
+networks:
+  mocut-network:
+    driver: bridge
