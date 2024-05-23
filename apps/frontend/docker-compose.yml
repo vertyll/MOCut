@@ -1,18 +1,28 @@
 version: "3.8"
+
 services:
   mocut-frontend:
     build:
       context: .
+      args:
+        FRONTEND_TAG: ${FRONTEND_TAG}
       dockerfile: Dockerfile
-    image: mocut-frontend
+    image: ${APP_NAME}-frontend:${FRONTEND_TAG}
     container_name: mocut-frontend
     ports:
-      - "4000:4000"
+      - "${FRONTEND_PORT}:4000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start
     networks:
       - mocut-network
+    env_file:
+      - ../../.env
 
 networks:
   mocut-network:
+    name: mocut-network
     driver: bridge

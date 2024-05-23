@@ -1,5 +1,8 @@
-# Dockerfile for frontend
-FROM node:20.13.1-alpine
+# Dockerfile for frontend development
+
+# Use the Node.js image as the base
+ARG FRONTEND_TAG
+FROM node:${FRONTEND_TAG}
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
@@ -13,8 +16,8 @@ RUN npm install
 # Copy the rest of the application files to the working directory
 COPY . .
 
-# Build the application with SSR (Server-Side Rendering)
-RUN npm run build:ssr
+# Install Angular CLI globally
+RUN npm install -g @angular/cli
 
 # Set environment variables
 ENV PORT=4000
@@ -22,5 +25,5 @@ ENV PORT=4000
 # Expose the application port
 EXPOSE 4000
 
-# Command to run the application
-CMD ["npm", "run", "serve:ssr:frontend"]
+# Command to run the application in development mode
+CMD ["npm", "run", "start"]

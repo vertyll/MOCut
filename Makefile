@@ -41,12 +41,12 @@ ps:
 
 # Access the running backend container
 exec-backend:
-	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec mocut-backend /bin/bash
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec ${APP_NAME}-backend /bin/bash
 
 # Access the running frontend container
 exec-frontend:
-	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec mocut-frontend /bin/bash
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec ${APP_NAME}-frontend /bin/bash
 
 # Access the running postgres container
 exec-postgres:
-	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec mocut-postgres /bin/bash
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec ${APP_NAME}-postgres /bin/bash

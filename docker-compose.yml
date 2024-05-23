@@ -4,55 +4,71 @@ services:
   mocut-backend:
     build:
       context: ./apps/backend
-    image: mocut-backend
+      args:
+        BACKEND_TAG: ${BACKEND_TAG}
+    image: ${APP_NAME}-backend:${BACKEND_TAG}
     container_name: mocut-backend
     restart: unless-stopped
     tty: true
     environment:
-      SERVICE_NAME: mocut-backend
+      SERVICE_NAME: ${APP_NAME}-backend
       SERVICE_TAGS: dev
       DB_CONNECTION: pgsql
       DB_HOST: mocut-postgres
-      DB_PORT: 5432
-      DB_DATABASE: mocut
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
     working_dir: /var/www
     volumes:
       - ./apps/backend:/var/www
       - ./apps/backend/docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - mocut-network
+    ports:
+      - "${BACKEND_PORT}:9000"
+    env_file:
+      - .env
 
   mocut-postgres:
-    image: postgres:16
+    image: postgres:${POSTGRES_TAG}
     container_name: mocut-postgres
     restart: unless-stopped
     tty: true
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
     environment:
-      POSTGRES_DB: mocut
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./apps/backend/docker/postgres/data:/var/lib/postgresql/data
     networks:
       - mocut-network
+    env_file:
+      - .env
 
   mocut-frontend:
     build:
       context: ./apps/frontend
-      dockerfile: Dockerfile
-    image: mocut-frontend
+      args:
+        FRONTEND_TAG: ${FRONTEND_TAG}
+    image: ${APP_NAME}-frontend:${FRONTEND_TAG}
     container_name: mocut-frontend
     ports:
-      - "4000:4000"
+      - "${FRONTEND_PORT}:4000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
+    volumes:
+      - ./apps/frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start
     networks:
       - mocut-network
+    env_file:
+      - .env
 
 networks:
   mocut-network:
+    name: mocut-network
     driver: bridge
