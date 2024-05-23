@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  backend:
+  mocut-backend:
     build:
       context: .
     image: mocut-backend
@@ -12,7 +12,7 @@ services:
       SERVICE_NAME: mocut-backend
       SERVICE_TAGS: dev
       DB_CONNECTION: pgsql
-      DB_HOST: postgres
+      DB_HOST: mocut-postgres
       DB_PORT: 5432
       DB_DATABASE: mocut
       DB_USERNAME: postgres
@@ -24,7 +24,7 @@ services:
     networks:
       - mocut-network
 
-  postgres:
+  mocut-postgres:
     image: postgres:13
     container_name: mocut-postgres
     restart: unless-stopped
