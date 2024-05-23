@@ -25,7 +25,7 @@ services:
       - mocut-network
 
   mocut-postgres:
-    image: postgres:13
+    image: postgres:16
     container_name: mocut-postgres
     restart: unless-stopped
     tty: true
