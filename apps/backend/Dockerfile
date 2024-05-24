@@ -1,8 +1,8 @@
-# Dockerfile for backend development
+# Dockerfile for backend development using FrankenPHP
 
-# Use the PHP image as the base
+# Use the official FrankenPHP image as the base
 ARG BACKEND_TAG
-FROM php:${BACKEND_TAG}
+FROM dunglas/frankenphp:${BACKEND_TAG}
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -42,13 +42,13 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
-WORKDIR /var/www
+WORKDIR /app
 
 # Copy existing application directory contents
-COPY . /var/www
+COPY . /app
 
 # Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www
+COPY --chown=www-data:www-data . /app
 
 # Install Laravel dependencies
 RUN composer install
@@ -56,6 +56,14 @@ RUN composer install
 # Generate Laravel key
 RUN php artisan key:generate
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+# Run database migrations
+RUN php artisan migrate
+
+# Add healthcheck
+HEALTHCHECK CMD curl --fail http://localhost || exit 1
+
+# Expose ports for FrankenPHP
+EXPOSE 80 443 443/udp
+
+# Start FrankenPHP server
+CMD ["frankenphp", "php-server", "-r", "public/"]
