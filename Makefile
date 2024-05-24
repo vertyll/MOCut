@@ -3,7 +3,7 @@ DOCKER_COMPOSE = docker-compose
 COMPOSE_FILE = docker-compose.yml
 
 # Default targets
-.PHONY: all build up down start stop restart logs ps exec-backend exec-frontend exec-postgres
+.PHONY: all build up down start stop restart logs ps exec-backend exec-frontend exec-postgres prune
 
 # Default target
 all: build up
@@ -50,3 +50,7 @@ exec-frontend:
 # Access the running postgres container
 exec-postgres:
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec ${APP_NAME}-postgres /bin/bash
+
+# Prune Docker system
+prune:
+	docker system prune -f
