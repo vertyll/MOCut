@@ -50,14 +50,15 @@ COPY . /app
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /app
 
+# Copy wait-for-it script
+COPY docker/wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+
 # Install Laravel dependencies
 RUN composer install
 
 # Generate Laravel key
 RUN php artisan key:generate
-
-# Run database migrations
-RUN php artisan migrate
 
 # Add healthcheck
 HEALTHCHECK CMD curl --fail http://localhost || exit 1
@@ -65,5 +66,9 @@ HEALTHCHECK CMD curl --fail http://localhost || exit 1
 # Expose ports for FrankenPHP
 EXPOSE 80 443 443/udp
 
-# Start FrankenPHP server
-CMD ["frankenphp", "php-server", "-r", "public/"]
+# Copy entrypoint script
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Start FrankenPHP server using the entrypoint script
+CMD ["/usr/local/bin/entrypoint.sh"]
