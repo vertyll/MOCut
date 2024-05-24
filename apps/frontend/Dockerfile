@@ -19,11 +19,11 @@ COPY . .
 # Install Angular CLI globally
 RUN npm install -g @angular/cli
 
-# Set environment variables
-ENV PORT=4000
-
 # Expose the application port
-EXPOSE 4000
+EXPOSE 4200
+
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 CMD curl --fail http://localhost:4200 || exit 1
 
 # Command to run the application in development mode
-CMD ["npm", "run", "start"]
+CMD ["ng", "serve", "--host", "0.0.0.0"]
