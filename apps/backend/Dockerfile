@@ -63,12 +63,12 @@ RUN php artisan key:generate
 # Add healthcheck
 HEALTHCHECK CMD curl --fail http://localhost || exit 1
 
-# Expose ports for FrankenPHP
-EXPOSE 80 443 443/udp
+# Expose the port the application will run on
+EXPOSE 8000
 
 # Copy entrypoint script
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Start FrankenPHP server using the entrypoint script
+# Start the Laravel Octane server with FrankenPHP using the entrypoint script
 CMD ["/usr/local/bin/entrypoint.sh"]
